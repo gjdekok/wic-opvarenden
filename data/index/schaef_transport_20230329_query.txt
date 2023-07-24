@@ -1,0 +1,51 @@
+SPARQL ENDPOINT: https://sparql2.goldenagents.org/saa
+
+
+PREFIX ro: <http://purl.org/obo/owl/ro#>
+PREFIX pnv: <https://w3id.org/pnv#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rpp: <https://data.goldenagents.org/ontology/rpp/>
+PREFIX oa: <http://www.w3.org/ns/oa#>
+SELECT * WHERE {
+    
+  # Index op een akte (URI = Stadsarchief)
+    ?akteIndex a rpp:IndexDocument ;
+          rpp:indexOf ?akte ;
+          rpp:mentionsEvent ?event ;
+          rpp:mentionsPerson ?person ;
+          rpp:onScan ?scan .
+  
+    # De akte beschrijft personen
+    ?person a rpp:Person ;
+          pnv:hasName ?pn .
+   
+  # Die hebben een naam
+    ?pn a pnv:PersonName ;
+          pnv:literalName ?personName .
+  
+    # In het geval van de NA zijn die namen afgeleid van een stukje op de scan, een Annotatie
+    ?annotation a oa:Annotation ;
+          oa:hasBody ?pn ;
+                      
+          oa:hasTarget [ oa:hasSource ?scan ;
+                         oa:hasSelector/rdf:value ?coordinates ] .
+  
+      # Scans hebben een fatsoenlijke unieke onveranderlijke naam
+      ?scan a rpp:Scan ;
+            rdfs:label ?scanName .
+  
+      # Omdat dit niet altijd is ingevuld, denk ik
+    OPTIONAL { ?akteIndex rdfs:comment ?onderwerpsomschrijving . }
+  
+      # Registratie van een Transport
+    ?event a <https://data.goldenagents.org/thesaurus/Transport> .
+  
+      # Fysieke akte (URI = GA)
+    ?akte a <https://data.goldenagents.org/thesaurus/NotarieleArchieven> ;
+          rpp:createdAt ?date ;
+          rpp:createdBy ?notaris .
+  
+      # Wel van Hendrik Schaef
+    FILTER(?notaris = <https://data.create.humanities.uva.nl/id/notarissennetwerk/person/2077>)
+} 
