@@ -156,7 +156,8 @@ class Deed:
         # Look for the file in the local folder
         if not os.path.exists(f'../data/pagexml/{filename}'):
             print("File not found!")
-            raise FileNotFoundError
+            return None
+            # raise FileNotFoundError
 
         # # Get image URL
         # if filename in image_url:
@@ -324,9 +325,7 @@ class DeedProcessor:
             subject = deed_data.get('subject', None)
             persons = deed_data.get('persons', None)
             locations = deed_data.get('locations', None)
-            # Create the Deed object
             deed = Deed(deed_uri, date, subject, persons, locations)
-            # Append to the list
             self.deeds.append(deed)
  
     def get_all_deeds(self):
@@ -338,7 +337,7 @@ class Sailor:
     It also contains a dictionary 'check' to store algorithm input for manual verification of the output.
     """
 
-    def __init__(self, deed, sailor_uri=None, name=None, location=None, location_uri=None, location_htr=None, role=None, role_htr=None, organization=None, organization_htr=None, shipname=None, shipname_htr=None):
+    def __init__(self, deed, sailor_uri=None, name=None, location=None, location_uri=None, location_htr=None, role=None, role_htr=None, organization=None, organization_htr=None, shipname=None, shipname_htr=None, debtor_name=None, debtor_uri=None, debt_htr=None):
         self.deed = deed
         self.sailor_uri = sailor_uri
         self.name = name
@@ -351,6 +350,9 @@ class Sailor:
         self.organization_htr = organization_htr
         self.shipname = shipname
         self.shipname_htr = shipname_htr
+        self.debtor_name = debtor_name
+        self.debtor_uri = debtor_uri
+        self.debt_htr = debt_htr
         self.check = {} # Dictionary to store algorithm input for manual check
 
 
@@ -370,9 +372,9 @@ class SailorExtractor:
         
         self.schepen_set = self._prepare_schepen_set()
 
-                # Config for the various formulaic pattern searchers
+        # Config for the various formulaic pattern searchers
 
-        # Config for sailor searcher ("varende voor")
+        # Config for formulaic phrase searcher ("varende voor")
         self.config = {
             "char_match_threshold": 0.8,
             "ngram_threshold": 0.6,
@@ -382,7 +384,7 @@ class SailorExtractor:
             "skip_size": 2,
         }
 
-        # Config for sailor name searcher (fuzzy search for sailor names mentioned in the index)
+        # Config for instance (name, location) searcher
         self.config2 = {
             "char_match_threshold": 0.6,
             "ngram_threshold": 0.5,
@@ -392,16 +394,7 @@ class SailorExtractor:
             "skip_size": 2,
         }
 
-        # Config for location searcher (fuzzy search for location names mentioned in the index)
-        self.config3 = {
-            "char_match_threshold": 0.6,
-            "ngram_threshold": 0.5,
-            "levenshtein_threshold": 0.5,
-            "ignorecase": True,
-            "ngram_size": 2,
-            "skip_size": 2,
-        }
-
+   
     def _prepare_schepen_set(self):
         """Private method to prepare a set of ship names."""
         schepen_set = set()
@@ -429,17 +422,9 @@ class SailorExtractor:
             list: A list of Sailor instances extracted from the deeds.
         """
 
-
         # Set signal phrases for sailor searcher
         sailor_searcher = FuzzyPhraseSearcher(self.config)
-        sailor_phrases = [
-            "varende voor",
-            "vare voor",
-            "estvarende voor",
-            "oouvarende voor",
-            "van voor",
-            "voren opt' schip",
-        ]
+        sailor_phrases = ["varende voor", "vare voor", "estvarende voor", "oouvarende voor", "van voor", "voren opt' schip"]
         sailor_model = PhraseModel(phrases=sailor_phrases)
         sailor_searcher.index_phrase_model(sailor_model)
 
@@ -449,16 +434,22 @@ class SailorExtractor:
         sailor_alt_model = PhraseModel(phrases=sailor_alt_phrases)
         sailor_alt_searcher.index_phrase_model(sailor_alt_model)
 
-        sailor_name_searcher = FuzzyPhraseSearcher(self.config2)
-        location_searcher = FuzzyPhraseSearcher(self.config3)
+        # Set signal phrases for debtor searcher
+        debtor_searcher = FuzzyPhraseSearcher(self.config)
+        debtor_phrases = ["wesen aan"]
+        debtor_model = PhraseModel(phrases=debtor_phrases)
+        debtor_searcher.index_phrase_model(debtor_model)
+
+        name_searcher = FuzzyPhraseSearcher(self.config2)
+        location_searcher = FuzzyPhraseSearcher(self.config2)
 
         # Set no sailor job phrases for sailor job searcher (after these phrases, the job is not mentioned)
         no_sailor_job_phrases = ["voren opt' schip", "onder capitein", "onder cap", "varen na", "opt schip", "op t' schif"]
 
-        # Set pattern to extract ship names and organizations using regex
+        # Set pattern to extract ship names, organizations and debt amounts using regex
         ship_pattern = r"(?:op|opt|op't|op t) ('t )?(\b(?:schip|Schip)\b\s*(?:de|d')?\s*\w+(?:\s*\w+)?)"
         org_pattern = r"(?:\b(?:Oost|West|west)[-\s]?Ind(?:e|ische)(?:[.]? Comp.?)?\b)"
-
+        debt_pattern =  r"de\s?(s|z)om{1,2}e van(.*?(?:(?=\sover)|[es]?[a]?r?:?\s?g[lu]?\.?|car[oe]?l[ui]?s? g[lu]?[sd]?.?))"sar: gl\.|Carolis Guldent))"
 
         extracted_sailors = []
 
@@ -470,6 +461,9 @@ class SailorExtractor:
             c += 1
             print(f"Extracting sailors from deed {c} of {number_to_check}", end="\r")
             pagexml = deed.get_pagexml()
+            if not pagexml:
+                continue
+            
             text, fullcoords, dimensions = deed.get_first_lines(pagexml)
 
             if not text:
@@ -515,17 +509,21 @@ class SailorExtractor:
             org_htr = None
             shipname = None
             shipname_htr = None
+            debtor_name = None
+            debtor_uri = None
+            debt_htr = None
 
             if match:
+                
                 interesting_text = text[match.offset-70:match.offset].replace("Schaef", "") # If Schaef himself is mentioned, delete mention to avoid confusing him with a sailor
                 interesting_text_after = text[match.offset:match.offset+95]
 
                 # Let's see if the one of the names mentioned in the index is mentioned in the deed as a sailor
-                sailor_name_searcher = FuzzyPhraseSearcher(self.config2)
-                sailor_name_phrases = list(name_to_uri.keys())
-                sailor_name_model = PhraseModel(phrases=sailor_name_phrases)
-                sailor_name_searcher.index_phrase_model(sailor_name_model)
-                best_sailor_name_match = max(sailor_name_searcher.find_matches(interesting_text), default=None, key=lambda x: x.levenshtein_similarity)
+                name_searcher = FuzzyPhraseSearcher(self.config2)
+                name_phrases = list(name_to_uri.keys())
+                name_model = PhraseModel(phrases=name_phrases)
+                name_searcher.index_phrase_model(name_model)
+                best_sailor_name_match = max(name_searcher.find_matches(interesting_text), default=None, key=lambda x: x.levenshtein_similarity)
                 
                 if best_sailor_name_match:
                     sailor_name = best_sailor_name_match.phrase.phrase_string
@@ -534,7 +532,7 @@ class SailorExtractor:
                 # Now let's see if we can find the birthplace for this sailor. It is likely the place mentioned in the 
                 # 'interesting text'. So let's compare this text to the indexed locations from this deed
                 # create a list of domain keywords and phrases
-                location_searcher = FuzzyPhraseSearcher(self.config3)
+                location_searcher = FuzzyPhraseSearcher(self.config2)
                 location_phrases = list(location_to_uri.keys())
                 location_model = PhraseModel(phrases=location_phrases)
                 location_searcher.index_phrase_model(location_model)
@@ -599,6 +597,24 @@ class SailorExtractor:
                 if len(possible_ship_mention) > 1:
                     shipname = next((shipname for shipname in self.schepen_set if shipname in possible_ship_mention[1].lower()), None)            
       
+            # Now let's try and find the debtor
+            match = max(debtor_searcher.find_matches(text), default=None, key=lambda x: x.levenshtein_similarity)
+
+            if match:
+                possible_debtor_mention = text[match.offset:match.offset+50]
+                best_debtor_name_match = max(name_searcher.find_matches(possible_debtor_mention), default=None, key=lambda x: x.levenshtein_similarity)
+                
+                if best_debtor_name_match:
+                    debtor_name = best_debtor_name_match.phrase.phrase_string
+                    debtor_uri = name_to_uri.get(debtor_name)
+
+                possible_debt_mention = text[match.offset+20:match.offset+200]
+                debt_match = re.search(debt_pattern, possible_debt_mention, re.IGNORECASE)
+                if debt_match:
+                    debt_htr = debt_match.group(2).strip()
+
+
+
             # Create Sailor instances with the extracted information
             sailor = Sailor(
                 deed=deed,
@@ -612,7 +628,10 @@ class SailorExtractor:
                 organization = org,
                 organization_htr = org_htr,
                 shipname = shipname,
-                shipname_htr = shipname_htr
+                shipname_htr = shipname_htr,
+                debtor_name = debtor_name,
+                debtor_uri = debtor_uri,
+                debt_htr = debt_htr
             )
 
             sailor.check =  {
