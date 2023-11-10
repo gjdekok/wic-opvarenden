@@ -11,6 +11,26 @@ from fuzzy_search.fuzzy_phrase_searcher import FuzzyPhraseSearcher
 from fuzzy_search.fuzzy_phrase_model import PhraseModel
 import re
 
+# Using OpenAI (optional)
+import openai
+import json
+import dotenv
+
+# Making it faster with parallel processing
+import multiprocessing
+import logging
+
+logging.basicConfig(level=logging.INFO)
+
+# load api key from .env file
+dotenv.load_dotenv()
+openai.api_key = os.getenv("API_KEY")
+
+def process_chunk(deeds_chunk):
+    sailor_extractor = SailorExtractor(deeds_chunk)
+    sailors_chunk = sailor_extractor.extract_sailors()
+    return sailors_chunk
+
 # Utility functions
 
 def overlap(box_coord, target_coord, margin=0):
@@ -154,10 +174,8 @@ class Deed:
         filename = str(scan) + str(page).zfill(6) + ".xml"
 
         # Look for the file in the local folder
-        if not os.path.exists(f'../data/pagexml/{filename}'):
-            print("File not found!")
-            return None
-            # raise FileNotFoundError
+        if not os.path.exists(f'../data/pagexml/{filename}'): 
+            raise FileNotFoundError
 
         # # Get image URL
         # if filename in image_url:
@@ -333,11 +351,12 @@ class DeedProcessor:
 
 class Sailor:
     """
-    The Sailor class represents a sailor with a reference to the corresponding deed, and metadata such as URI, name, location, role, organization, and ship name.
-    It also contains a dictionary 'check' to store algorithm input for manual verification of the output.
+    The Sailor class represents a sailor with a reference to the corresponding deed, and metadata 
+    such as URI, name, location, role, organization, and ship name. It also contains a dictionary 
+    'check' to store algorithm input for manual verification of the output.
     """
 
-    def __init__(self, deed, sailor_uri=None, name=None, location=None, location_uri=None, location_htr=None, role=None, role_htr=None, organization=None, organization_htr=None, shipname=None, shipname_htr=None, debtor_name=None, debtor_uri=None, debt_htr=None):
+    def __init__(self, deed, sailor_uri=None, name=None, location=None, location_uri=None, location_htr=None, role=None, role_htr=None, organization=None, organization_htr=None, shipname=None, shipname_htr=None, creditor_name=None, creditor_uri=None, debt_htr=None):
         self.deed = deed
         self.sailor_uri = sailor_uri
         self.name = name
@@ -350,17 +369,17 @@ class Sailor:
         self.organization_htr = organization_htr
         self.shipname = shipname
         self.shipname_htr = shipname_htr
-        self.debtor_name = debtor_name
-        self.debtor_uri = debtor_uri
+        self.creditor_name = creditor_name
+        self.creditor_uri = creditor_uri
         self.debt_htr = debt_htr
-        self.check = {} # Dictionary to store algorithm input for manual check
-
+        self.check = {}
 
 
 class SailorExtractor:
     """
     The SailorExtractor class is responsible for extracting sailors from a list of Deed objects.
-    It contains a method 'extract_sailors' which processes the deeds and extracts Sailor instances with the corresponding metadata.
+    It contains a method 'extract_sailors' which processes the deeds and extracts Sailor instances 
+    with the corresponding metadata.
     """
 
     def __init__(self, deeds):
@@ -410,6 +429,80 @@ class SailorExtractor:
         return schepen_set
     
 
+    def test_sailors(self):
+        """
+        Test function
+        """
+        self.test_config = {
+            "char_match_threshold": 0.8,
+            "ngram_threshold": 0.6,
+            "levenshtein_threshold": 0.7,
+            "ignorecase": True,
+            "ngram_size": 4,
+            "skip_size": 2,
+        }
+
+        # Initialize logger
+        logger = logging.getLogger(__name__)
+        
+        # Set signal phrases for sailor searcher
+        sailor_searcher = FuzzyPhraseSearcher(self.config)
+        sailor_phrases = ["varende voor"]
+        sailor_model = PhraseModel(phrases=sailor_phrases)
+        sailor_searcher.index_phrase_model(sailor_model)
+
+        # Set signal phrases for sailor searcher
+        tsailor_searcher = FuzzyPhraseSearcher(self.test_config)
+        tsailor_phrases = ["varende voor"]
+        tsailor_model = PhraseModel(phrases=tsailor_phrases)
+        tsailor_searcher.index_phrase_model(tsailor_model)
+
+        extracted_sailors = []
+
+        number_to_check = len(self.deeds)
+        c = 0
+
+        for deed in self.deeds:
+            
+            c += 1
+
+            try:
+                pagexml = deed.get_pagexml()
+            except FileNotFoundError:
+                # Log the error message
+                logger.error(f"Process {multiprocessing.current_process().name}: The file for the deed with number {c} has not been found.")
+                continue
+            
+            text, fullcoords, dimensions = deed.get_first_lines(pagexml)
+
+            if not text:
+                text = ""
+               
+            # ANALYZING FIRST LINES OF DEED USING FUZZY MATCHING
+            # We will now take a closer look at the first lines of the deed. The sailor_searcher object will
+            # look for text patterns that might signal the mention of a sailor ("varende voor")
+            # Let's take the most likely match, if there is no match, skip this deed    
+            match = max(sailor_searcher.find_matches(text), default=None, key=lambda x: x.levenshtein_similarity)
+
+            # If there is no match, sometimes "varende voor" is attached to other words due to HTR errors
+            # Try finding this phrase first w/o Phrasesearcher and add spaces before and after the phrase
+            if not match:
+                if "varende voor" in text:
+                    # Add an extra space before and after the phrase
+                    text = text.replace("varende voor", " varende voor ")
+                    match = max(sailor_searcher.find_matches(text), default=None, key=lambda x: x.levenshtein_similarity)
+
+                elif "varende" in text:
+                    text = text.replace("varende", " varende voor ")
+                    match = max(sailor_searcher.find_matches(text), default=None, key=lambda x: x.levenshtein_similarity)
+
+            # Try searching for an alternative text pattern
+            if not match:
+                match = max(tsailor_searcher.find_matches(text), default=None, key=lambda x: x.levenshtein_similarity)
+
+                if match:
+                    print(text)
+                
     def extract_sailors(self):
         """
         Extracts Sailor instances from the list of Deed objects provided during the SailorExtractor initialization.
@@ -422,6 +515,9 @@ class SailorExtractor:
             list: A list of Sailor instances extracted from the deeds.
         """
 
+        # Initialize logger
+        logger = logging.getLogger(__name__)
+        
         # Set signal phrases for sailor searcher
         sailor_searcher = FuzzyPhraseSearcher(self.config)
         sailor_phrases = ["varende voor", "vare voor", "estvarende voor", "oouvarende voor", "van voor", "voren opt' schip"]
@@ -434,11 +530,11 @@ class SailorExtractor:
         sailor_alt_model = PhraseModel(phrases=sailor_alt_phrases)
         sailor_alt_searcher.index_phrase_model(sailor_alt_model)
 
-        # Set signal phrases for debtor searcher
-        debtor_searcher = FuzzyPhraseSearcher(self.config)
-        debtor_phrases = ["wesen aan"]
-        debtor_model = PhraseModel(phrases=debtor_phrases)
-        debtor_searcher.index_phrase_model(debtor_model)
+        # Set signal phrases for creditor searcher
+        creditor_searcher = FuzzyPhraseSearcher(self.config)
+        creditor_phrases = ["wesen aan"]
+        creditor_model = PhraseModel(phrases=creditor_phrases)
+        creditor_searcher.index_phrase_model(creditor_model)
 
         name_searcher = FuzzyPhraseSearcher(self.config2)
         location_searcher = FuzzyPhraseSearcher(self.config2)
@@ -451,7 +547,6 @@ class SailorExtractor:
         org_pattern = r"(?:\b(?:Oost|West|west)[-\s]?Ind(?:e|ische)(?:[.]? Comp.?)?\b)"
         debt_pattern = r"de\s?(s|z)om{1,2}e van(.*?(?:(?=\sover)|[es]?[a]?r?:?\s?g[lu]?\.?|car[oe]?l[ui]?s? g[lu]?[sd]?.?))"
 
-
         extracted_sailors = []
 
         number_to_check = len(self.deeds)
@@ -460,9 +555,15 @@ class SailorExtractor:
         for deed in self.deeds:
             
             c += 1
-            print(f"Extracting sailors from deed {c} of {number_to_check}", end="\r")
-            pagexml = deed.get_pagexml()
-            if not pagexml:
+
+            # Log progress information with timestamps and process ID
+            logger.info(f"Process {multiprocessing.current_process().name}: Extracting sailors from deed {c} of {number_to_check}")
+            
+            try:
+                pagexml = deed.get_pagexml()
+            except FileNotFoundError:
+                # Log the error message
+                logger.error(f"Process {multiprocessing.current_process().name}: The file for the deed with number {c} has not been found.")
                 continue
             
             text, fullcoords, dimensions = deed.get_first_lines(pagexml)
@@ -470,7 +571,7 @@ class SailorExtractor:
             if not text:
                 text = ""
                
-            # Get a list of sailors and locations mentioned in this deed
+                   # Get a list of sailors and locations mentioned in this deed
             name_to_uri = {person.label: person.person_uri for person in deed.persons}
             location_to_uri = {location.label.replace('?', ''): location.location_uri for location in deed.locations} # Remove question marks from location names as fuzzy_search doesn't like them
 
@@ -510,8 +611,8 @@ class SailorExtractor:
             org_htr = None
             shipname = None
             shipname_htr = None
-            debtor_name = None
-            debtor_uri = None
+            creditor_name = None
+            creditor_uri = None
             debt_htr = None
 
             if match:
@@ -598,23 +699,24 @@ class SailorExtractor:
                 if len(possible_ship_mention) > 1:
                     shipname = next((shipname for shipname in self.schepen_set if shipname in possible_ship_mention[1].lower()), None)            
       
-            # Now let's try and find the debtor
-            match = max(debtor_searcher.find_matches(text), default=None, key=lambda x: x.levenshtein_similarity)
+            # Now let's try and find the creditor and the debt amount
+            match = max(creditor_searcher.find_matches(text), default=None, key=lambda x: x.levenshtein_similarity)
 
             if match:
-                possible_debtor_mention = text[match.offset:match.offset+50]
-                best_debtor_name_match = max(name_searcher.find_matches(possible_debtor_mention), default=None, key=lambda x: x.levenshtein_similarity)
+                possible_creditor_mention = text[match.offset:match.offset+50]
+                print(possible_creditor_mention)
+                best_creditor_name_match = max(name_searcher.find_matches(possible_creditor_mention), default=None, key=lambda x: x.levenshtein_similarity)
+                print(best_creditor_name_match)
                 
-                if best_debtor_name_match:
-                    debtor_name = best_debtor_name_match.phrase.phrase_string
-                    debtor_uri = name_to_uri.get(debtor_name)
+                if best_creditor_name_match:
+                    creditor_name = best_creditor_name_match.phrase.phrase_string
+                    creditor_uri = name_to_uri.get(creditor_name)
 
                 possible_debt_mention = text[match.offset+20:match.offset+200]
+                print(possible_debt_mention)
                 debt_match = re.search(debt_pattern, possible_debt_mention, re.IGNORECASE)
                 if debt_match:
                     debt_htr = debt_match.group(2).strip()
-
-
 
             # Create Sailor instances with the extracted information
             sailor = Sailor(
@@ -630,8 +732,8 @@ class SailorExtractor:
                 organization_htr = org_htr,
                 shipname = shipname,
                 shipname_htr = shipname_htr,
-                debtor_name = debtor_name,
-                debtor_uri = debtor_uri,
+                creditor_name = creditor_name,
+                creditor_uri = creditor_uri,
                 debt_htr = debt_htr
             )
 
@@ -650,3 +752,149 @@ class SailorExtractor:
             extracted_sailors.append(sailor)
         
         return extracted_sailors
+        
+    def parallel_extract_sailors(self):
+
+        num_cores = multiprocessing.cpu_count() - 1
+        if num_cores <= 0:
+            num_cores = 1  # Ensure at least one core is used
+
+        if len(self.deeds) <= num_cores:
+            chunk_size = 1  # Process each deed in a separate chunk
+        else:
+            chunk_size = len(self.deeds) // num_cores
+
+        deeds_chunks = [self.deeds[i:i + chunk_size] for i in range(0, len(self.deeds), chunk_size)]
+
+        with multiprocessing.Pool(processes=num_cores) as pool:
+            sailor_chunks = pool.map(process_chunk, deeds_chunks)
+
+        extracted_sailors = [sailor for sailor_chunk in sailor_chunks for sailor in sailor_chunk]
+
+        return extracted_sailors
+
+
+
+    def extract_sailors_ai(self):
+        """
+        Extracts Sailor instances from the list of Deed objects provided during the SailorExtractor initialization. 
+        
+        This method processes each deed, retrieves the corresponding PageXML, and extracts the first few lines of the deed.
+        It then uses OpenAI's GPT-3 API to extract the structured data.
+        Finally, it returns a list of extracted Sailor instances with the corresponding metadata and additional information for manual checks.
+        
+        Returns:
+            list: A list of Sailor instances extracted from the deeds.
+        """
+
+        extracted_sailors = []
+
+        number_to_check = len(self.deeds)
+        c = 0
+        orgs_short = ["VOC", "WIC"]
+
+        functions = [
+        {
+            "name": "extract_sailor_info",
+            "description": "Extract metadata information from a given text about a sailor's debt situation.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "name_of_sailor": {
+                        "type": "string",
+                        "description": "Name of the sailor/debtor",
+                    },
+                    "ship": {
+                        "type": "string",
+                        "description": "Ship in which he sails (if mentioned)",
+                    },
+                    "birthplace": {
+                        "type": "string",
+                        "description": "Birthplace of the sailor",
+                    },
+                    "job": {
+                        "type": "string",
+                        "description": "Job of the sailor (i.e. bosschieter, matroos)",
+                    },
+                    "creditor": {
+                        "type": "string",
+                        "description": "Name of the creditor",
+                    },
+                    "captain": {
+                        "type": "string",
+                        "description": "Name of the captain",
+                    },
+                    "debt_amount_source": {
+                        "type": "string",
+                        "description": "Debt amount from source",
+                    },
+                    "debt_amount_int": {
+                        "type": "integer",
+                        "description": "Debt amount in integer (best guess based on mentioned amount)",
+                    },
+                },
+            }
+        }
+    ]
+
+        for deed in self.deeds:
+            
+            c += 1
+            print(f"Extracting sailors from deed {c} of {number_to_check}", end="\r")
+            pagexml = deed.get_pagexml()
+            if not pagexml:
+                continue
+            
+            text, fullcoords, dimensions = deed.get_first_lines(pagexml)
+
+            if not text:
+                continue            
+            
+            # Get a list of sailors and locations mentioned in this deed
+            name_to_uri = {person.label: person.person_uri for person in deed.persons}
+            location_to_uri = {location.label.replace('?', ''): location.location_uri for location in deed.locations}
+
+            # Generate the prompt
+            prompt = f"""   
+                    Below is the Dutch text of a notarial deed (imperfect output of an HTR model). Extract:
+                    -the sailor
+                    -his function
+                    -where he is from
+                    -to whom he owes money (likely owed in carolus guldens or car: gls)
+                    -how much (exactly as written in the deed and in integers)
+                    -for what company
+                    -on which ship (if applicable)
+                    -under what captain (if applicable)
+
+                    For names and locations, only choose from the lists below (unless the name/location in the deed really doesn't resemble any in the lists).
+                    Indexed names: {list(name_to_uri.keys())}
+                    Indexed locations: {list(location_to_uri.keys())}
+
+                    For organizations, only choose from the list below (unless the organization in the deed really doesn't resemble any in the list). Anything with 'oost' is VOC, with 'west' is WIC.
+                    Indexed organizations: {orgs_short}
+
+                    If a ship name is mentioned in the metadata, pick that one if it resembles the ship name in the deed.
+                    Indexed metadata: {deed.subject if hasattr(deed, "subject") else ""}
+                    
+                    *****
+                    Deed text:
+
+                    {text}
+            """
+           
+            print(prompt)
+
+            # messages = []
+            # messages.append({"role": "system", "content": "Only use the fields as indicated."})
+            # messages.append({"role": "user", "content": prompt})
+            # response = openai.ChatCompletion.create(
+            #     model="gpt-3.5-turbo",
+            #     messages=messages, 
+            #     functions=functions
+            # )
+            # metadata_returned = json.loads(response["choices"][0]["message"]["function_call"]["arguments"])
+
+            # print(metadata_returned)
+
+        return extracted_sailors
+        
