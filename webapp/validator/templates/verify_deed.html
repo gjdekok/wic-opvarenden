@@ -102,6 +102,10 @@
         padding: 20px;
     }
 
+    .form-field label, .form-field input, .form-field select {
+        font-size: 0.9em; 
+    }
+
     .form-field {
         background-color: #f5f5f5;
     }
@@ -219,6 +223,24 @@
     margin-bottom: 15px;
 }
 
+.scan-and-text-container {
+        display: flex;
+        flex-direction: column;
+        height: 100%; /* Fill the height of its parent */
+    }
+
+    #openseadragon-viewer {
+        height: 50vh; /* Set a fixed height */
+        width: 100%;
+    }
+
+    .deed-text {
+        flex-grow: 1;
+        overflow-y: auto;
+        background-color: #f5f5f5;
+        padding: 10px;
+        border-radius: 10px;
+    }
 </style>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -231,7 +253,7 @@
 <div class="container-fluid">
     <div class="row full-height-row">
         <!-- Focus Text and Sailor on the Left -->
-        <div class="col-lg-4 left-column">
+        <div class="col-lg-5 left-column">
 
             <!-- Sailor Form Section -->
             <h5 style="text-align: center;">Sailor</h5>
@@ -258,20 +280,40 @@
                             <div class="form-field form-field-captain">
                                 <div class="form-row">{{form.final_captain.label_tag}}{{form.final_captain}}</div>
                             </div>
-                            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#additionalFields" aria-expanded="false" aria-controls="additionalFields" style="margin: 20px auto; display: table;">
-                                Show/Hide Additional Fields
-                            </button>
-                            <div class="collapse" id="additionalFields">
+
+                            <div class="form-field form-field-creditor">
+                                <div class="form-row">{{ form.final_creditor_name.label_tag }} {{ form.final_creditor_name }}</div>
+                            </div>
+                            <div class="form-field form-field-debt-amount">
+                                <div class="form-row">{{ form.final_debt_amount.label_tag }} {{ form.final_debt_amount }}</div>
+                            </div>
+                            <div class="form-field form-field-debt-amount-int">
+                                <div class="form-row">{{ form.final_debt_amount_int.label_tag }} {{ form.final_debt_amount_int }}</div>
+                            </div>
+
                                 <div class="form-field form-field-chamber">
                                     <div class="form-row">{{form.final_chamber.label_tag}}{{form.final_chamber}}</div>
                                 </div>
                                 <div class="form-field form-field-shiptype">
                                     <div class="form-row">{{form.final_shiptype.label_tag}}{{form.final_shiptype}}</div>
                                 </div>
+                            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#additionalFields" aria-expanded="false" aria-controls="additionalFields" style="margin: 20px auto; display: table;">
+                                Show/Hide Remarks
+                            </button>
+                            <div class="collapse" id="additionalFields">
+
                                 <div class="form-field form-field-remarks">
                                     <div class="form-row">{{form.final_remarks.label_tag}}{{form.final_remarks}}</div>
                                 </div>
                             </div>
+
+                            <div class="form-field">
+                                <div class="form-row">
+                                    {{ form.validation_complete.label_tag }}
+                                    {{ form.validation_complete }}
+                                </div>
+                            </div>
+
                             <div>{{form.submit_button}}</div>
                         </form>
                         <a href="{{ deed.deed_uri }}" target="_blank">Deed of {{ deed.deed_date|date:"j F Y" }}</a>
@@ -279,18 +321,86 @@
                 </div>
             </div>
 
-                        <!-- Focus Text Section -->
-                        <h5 class="text-center">Focus Text</h5>
-                        <div class="deed-text rounded-box">
-                            {{ deed.text|highlight_interesting_text_before:deed.interesting_text|highlight_interesting_text_after:deed.interesting_text_after|safe }}
-                        </div>
+            <h5 class="text-center">Focus Text</h5>
+            <div class="deed-text rounded-box">
+                {{ deed.text|highlight_interesting_text_before:deed.interesting_text|highlight_interesting_text_after:deed.interesting_text_after|safe }}
+            </div>
+
         </div>
 
-        <!-- Scan on the Right -->
-        <div class="col-lg-8">
-            <h5 class="text-center">Scan</h5>
-            <div id="openseadragon-viewer" style="width: 100%;"></div>
-        </div>
+                <!-- Right Column (Scan and Focus Text) -->
+                <div class="col-lg-7 scan-and-text-container">
+                    <h5 class="text-center">Scan</h5>
+                    <div id="openseadragon-viewer"></div>
+                    <div class="verification-helper">
+                        <table>
+                            <tr>
+                                <td class="item-title">Suggested names:</td>
+                                <td>
+                                    {% for name in deed.possible_names|split:',' %}
+                                        <span class="clickable-name clickable rounded-box">{{ name|clean_list_item }}</span>
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="item-title">Suggested locations:</td>
+                                <td>
+                                    {% if deed.location %}
+                                        <span class="clickable-location clickable rounded-box">{{ deed.location }}</span>
+                                    {% endif %}
+                                    {% if deed.location_htr %}
+                                        <span class="clickable-location clickable rounded-box">{{ deed.location_htr }}</span>
+                                    {% endif %}
+                                    {% for location in deed.possible_locations|split:',' %}
+                                        {% if location %}
+                                            <span class="clickable-location clickable rounded-box">{{ location|clean_list_item }}</span>
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                            </tr>    
+                            <tr>
+                                <td class="item-title">Suggested ship names:</td>
+                                <td>
+                                    {% if deed.ship_name %}
+                                        <span class="clickable-ship-name clickable rounded-box">{{ deed.ship_name }}</span>
+                                    {% endif %}
+                                    {% if deed.ship_name_htr %}
+                                        <span class="clickable-ship-name clickable rounded-box">{{ deed.ship_name_htr }}</span>
+                                    {% endif %}
+                                </td>
+                            </tr>      
+                            <tr>
+                                <td class="item-title">Suggested roles:</td>
+                                <td>
+                                    {% if deed.role %}
+                                        <span class="clickable-role clickable rounded-box">{{ deed.role }}</span>
+                                    {% endif %}
+                                    {% if deed.role_htr %}
+                                        <span class="clickable-role clickable rounded-box">{{ deed.role_htr }}</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="item-title">Suggested organizations:</td>
+                                <td>
+                                    {% if deed.organization %}
+                                        <span class="clickable-organization clickable rounded-box">{{ deed.organization }}</span>
+                                    {% endif %}
+                                    {% if deed.organization_htr %}
+                                        <span class="clickable-organization clickable rounded-box">{{ deed.organization_htr }}</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="item-title">Subject (index):</td>
+                                <td>{{deed.subject}}</td>
+                            </tr>
+                            
+                        </table>
+                    </div>
+
+                </div>
+
     </div>
 
 </div>
@@ -484,5 +594,13 @@ $("#id_final_organization").autocomplete({
             console.error('Error:', error);
         });
     }
+
+    document.addEventListener('keydown', function(event) {
+        if (event.code === 'Space') {
+            event.preventDefault();
+            const validationCheckbox = document.getElementById('id_validation_complete');
+            validationCheckbox.checked = !validationCheckbox.checked;
+        }
+    });
 </script>
 {% endblock %}

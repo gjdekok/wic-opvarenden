@@ -1,7 +1,7 @@
 from django.db import models
 
 class Deed(models.Model):
-    deed_uri = models.URLField(unique=True)
+    deed_uri = models.URLField(unique=True, db_index=True)
     deed_date = models.DateField()
     final_name = models.CharField(max_length=200, blank=True, verbose_name='Name')
     final_location = models.CharField(max_length=200, blank=True, verbose_name='Location')
@@ -11,12 +11,21 @@ class Deed(models.Model):
     final_captain = models.CharField(max_length=200, blank=True, null=True, verbose_name='Captain')
     final_chamber = models.CharField(max_length=200, blank=True, null=True, verbose_name='Chamber')
     final_shiptype = models.CharField(max_length=200, blank=True, null=True, verbose_name='Ship Type')
+    final_creditor_name = models.CharField(max_length=255, blank=True, null=True, verbose_name='Creditor Name')
+    final_debt_amount = models.CharField(max_length=1000, blank=True, verbose_name='Debt Amount')
+    final_debt_amount_int = models.IntegerField(blank=True, null=True, verbose_name='Debt Amount (Integer)')
     final_remarks = models.TextField(blank=True, null=True, verbose_name='Remarks')
     suggested_name = models.CharField(max_length=200, blank=True)
     suggested_location = models.CharField(max_length=200, blank=True)
     suggested_role = models.CharField(max_length=200, blank=True)
     suggested_organization = models.CharField(max_length=200, blank=True)
     suggested_ship_name = models.CharField(max_length=200, blank=True)
+    suggested_creditor_name = models.CharField(max_length=255, blank=True, null=True)
+    suggested_debt_amount = models.CharField(max_length=1000, blank=True)
+    suggested_debt_amount_int = models.IntegerField(blank=True, null=True)
+    creditor_name = models.CharField(max_length=255, blank=True, null=True)
+    debt_amount = models.CharField(max_length=1000, blank=True)
+    debt_amount_int = models.IntegerField(blank=True, null=True)
     name = models.CharField(max_length=255, blank=True, null=True)
     location = models.CharField(max_length=255, blank=True, null=True)
     role = models.CharField(max_length=255, blank=True, null=True)
@@ -27,6 +36,7 @@ class Deed(models.Model):
     organization_htr = models.CharField(max_length=255, blank=True, null=True)
     ship_name_htr = models.CharField(max_length=255, blank=True, null=True)
     sailor_uri = models.URLField(blank=True, null=True)
+    creditor_uri = models.URLField(blank=True, null=True)
     location_uri = models.URLField(blank=True, null=True)
     interesting_text = models.TextField(blank=True, null=True)
     interesting_text_after = models.TextField(blank=True, null=True)
@@ -41,3 +51,23 @@ class Deed(models.Model):
 
     def __str__(self):
         return f"{self.deed_uri} - {self.deed_date}"
+    
+
+class ValidatedDeed(models.Model):
+    deed_uri = models.URLField(unique=True)
+    deed_date = models.DateField()
+    name = models.CharField(max_length=255, blank=True, null=True)
+    location = models.CharField(max_length=255, blank=True, null=True)
+    ship_name = models.CharField(max_length=255, blank=True, null=True)
+    role = models.CharField(max_length=255, blank=True, null=True)
+    organization = models.CharField(max_length=255, blank=True, null=True)
+    captain = models.CharField(max_length=255, blank=True, null=True)
+    chamber = models.CharField(max_length=255, blank=True, null=True)
+    shiptype = models.CharField(max_length=255, blank=True, null=True)
+    remarks = models.TextField(blank=True, null=True)
+    sailor_uri = models.URLField(blank=True, null=True)
+    location_uri = models.URLField(blank=True, null=True)
+
+    def __str__(self):
+        return self.deed_uri
+

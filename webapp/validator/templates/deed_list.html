@@ -37,6 +37,8 @@
                   <th>Role</th>
                   <th>Organization</th>
                   <th>Captain</th>
+                  <th>Creditor</th>
+                  <th>Validated</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -103,6 +105,14 @@
                     {data: "final_role", name: "final_role"},
                     {data: "final_organization", name: "final_organization"},
                     {data: "final_captain", name: "final_captain"},
+                    {data: "final_creditor_name", name: "final_creditor_name"}, // Add Creditor column
+                    {
+                      data: "validation_complete", 
+                      name: "validation_complete",
+                      render: function(data, type, row) {
+                        return data ? 'Yes' : 'No'; // Show 'Yes' for true and 'No' for false
+                      }
+                    },
                   {data: null, render: function (data, type, row){
                     return '<a href="/verify_deed/' + row.id + '" class="btn btn-primary">Verify deed</a>';
                   }}
