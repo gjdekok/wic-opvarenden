@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<style>
+  .dataTables_wrapper .dataTables_paginate, .dataTables_wrapper .dataTables_info, .dataTables_wrapper .dataTables_length, .dataTables_wrapper .dataTables_filter{
+    margin-top: 20px;
+  }
+  #deedList {
+    font-size: 0.9em; 
+  }
+  #deedList .btn {
+    font-size: 0.8em; 
+  }
+  </style>
+  
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand mx-auto" href="#">WIC Opvarenden Validator</a>
+        <button class="btn btn-outline-secondary" type="button" onclick="location.href='/logout/'">Logout</button>
+    </div>
+</nav>
+<div class="container mt-3">
+    <h1>Deeds</h1>
+    <div class="mb-3">
+        <label for="yearRangeSlider">Year Range</label>
+        <div class="d-flex align-items-center">
+            <span id="minYear"></span>
+            <div id="yearRangeSlider" style="width: 80%; margin: 0 10px;"></div><span id="maxYear"></span> </div></div><hr> 
+            <table id="deedList" class="table table-striped">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Date</th>
+                  <th>Name</th>
+                  <th>Location</th>
+                  <th>Ship</th>
+                  <th>Role</th>
+                  <th>Organization</th>
+                  <th>Captain</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody> 
+              </tbody> 
+            </table>
+            </div>
+            {% endblock %}
+            
+            {% block extra_js %}
+            <script>
+            $(document).ready(function() {
+              var minYear = {{min_year}};
+              var maxYear = {{max_year}};
+            
+              $("#yearRangeSlider").slider({
+                range: true,
+                min: minYear,
+                max: maxYear,
+                values: [minYear, maxYear],
+                slide: function( event, ui ) {
+                  $('#minYear').text(ui.values[0]);
+                  $('#maxYear').text(ui.values[1]);
+                },
+                stop: function( event, ui ) {
+                  $('#deedList').DataTable().draw();
+                }
+              });
+            
+              $('#minYear').text($("#yearRangeSlider").slider("values", 0));
+              $('#maxYear').text($("#yearRangeSlider").slider("values", 1));
+              $('#deedList').DataTable({
+                processing: true,
+                serverSide: true,
+                stateSave: true,
+                stateSaveParams: function(settings, data) {
+                  // Save the year range values
+                  data.minYear = $("#yearRangeSlider").slider("values", 0);
+                  data.maxYear = $("#yearRangeSlider").slider("values", 1);
+                },
+                stateLoadParams: function(settings, data) {
+                  // Load the year range values
+                  if (data.minYear && data.maxYear){
+                    $("#yearRangeSlider").slider("values", [data.minYear, data.maxYear]);
+                    $('#minYear').text(data.minYear);
+                    $('#maxYear').text(data.maxYear);
+                  }
+                },
+                ajax: {
+                  url: "{% url 'deed_list' %}",
+                  type: 'POST',
+                  data: function (d) {
+                    d.minYear = $("#yearRangeSlider").slider("values", 0);
+                    d.maxYear = $("#yearRangeSlider").slider("values", 1);
+                    d.csrfmiddlewaretoken = '{{csrf_token}}';
+                  },
+                },
+                columns: [
+                    {data: "id", name: "id"},
+                    {data: "deed_date", name: "deed_date"},
+                    {data: "final_name", name: "final_name"},
+                    {data: "final_location", name: "final_location"},
+                    {data: "final_ship_name", name: "final_ship_name"},
+                    {data: "final_role", name: "final_role"},
+                    {data: "final_organization", name: "final_organization"},
+                    {data: "final_captain", name: "final_captain"},
+                  {data: null, render: function (data, type, row){
+                    return '<a href="/verify_deed/' + row.id + '" class="btn btn-primary">Verify deed</a>';
+                  }}
+                ]
+              });
+            });
+            </script>
+            {% endblock %}

@@ -1,0 +1,488 @@
+{% extends "base.html" %}
+
+{% load custom_filters %}
+
+{% block content %}
+<style>
+
+.full-height-row {
+        min-height: calc(100vh - 120px);
+        display: flex;
+    }
+
+    .left-column {
+        height: 100%;
+        overflow-y: auto; 
+    }
+
+    .rounded-box {
+        border-radius: 10px;
+        padding: 3px;
+    }
+
+    .deed-text {
+        background-color: #f5f5f5;
+    }
+
+    .clickable {
+        display: inline-block;
+        margin: 3px;
+    }
+
+    .sailor-name,
+    .sailor-location,
+    .role,
+    .organization,
+    .ship-name {
+        padding: 10px;
+    }
+
+    .sailor-name {
+        background-color: #c1e1ec;
+    }
+
+    .sailor-location {
+        background-color: #e1d1c1;
+    }
+
+    .role {
+        background-color: #c1e1c1;
+    }
+
+    .organization {
+        background-color: #e1c1e1;
+    }
+
+    .ship-name {
+        background-color: #d1c1e1;
+    }
+
+    .clickable-name,
+    .clickable-location,
+    .clickable-role,
+    .clickable-organization,
+    .clickable-ship-name {
+        cursor: pointer;
+        margin: 3px 3px;
+    }
+
+    .clickable-name {
+        background-color: #98c9d9;
+    }
+
+    .clickable-location {
+        background-color: #d9b798;
+    }
+
+    .clickable-role {
+        background-color: #98d998;
+    }
+
+    .clickable-organization {
+        background-color: #d998d9;
+    }
+
+    .clickable-ship-name {
+        background-color: #b798d9;
+    }
+
+    .form-container {
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+    .form-row {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .form-wrapper {
+        background-color: #f5f5f5;
+        border-radius: 10px;
+        padding: 20px;
+    }
+
+    .form-field {
+        background-color: #f5f5f5;
+    }
+
+    .form-field label {
+        display: inline-block;
+        background-color: inherit;
+        padding: 5px;
+        border-radius: 5px;
+    }
+
+    .form-field-name input {
+        background-color: #c1e1ec;
+    }
+
+    .form-field-location input {
+        background-color: #e1d1c1;
+    }
+
+    .form-field-role input {
+        background-color: #c1e1c1;
+    }
+
+    .form-field-organization input {
+        background-color: #e1c1e1;
+    }
+
+    .form-field-ship-name input {
+        background-color: #d1c1e1;
+    }
+
+    .form-field-captain input {
+        background-color: #c1d1e1;
+    }
+    
+
+    .form-field input {
+        width: 63%;
+    }
+
+    .extra-fields-btn {margin: 20px auto; display: table;}
+    
+    .info-section {
+        background-color: #f5f5f5;
+        padding: 10px;
+        border-radius: 10px;
+    }
+
+    .info-line {
+        margin-bottom: 10px;
+    }
+
+    .info-section h3 {
+        font-size: 1.2rem;
+    }
+
+    .info-section ul {
+        padding-left: 0;
+        list-style: none;
+    }
+
+    .highlight {
+        border: 2px solid red;
+        background-color: rgba(255, 0, 0, 0.2);
+    }
+
+    .verification-helper {
+        background-color: #f5f5f5;
+        border-radius: 10px;
+        padding: 20px;
+    }
+
+    .verification-helper .item-title {
+        font-weight: bold;
+        font-size: 0.9em;
+        display: inline-block;
+        width: 250px;
+    }
+
+    .verification-helper .clickable {
+        font-size: 0.85em;
+        display: inline-block;
+        margin-left: 5px;
+    }
+
+    h2 {
+        font-size: 1.5em;
+    }
+
+.back-btn {
+    display: inline-block;
+    margin-top: 20px; 
+}
+
+.nav-buttons-container {
+    position: sticky;
+    bottom: 0;
+    width: 100%;
+    background-color: #f8f9fa; 
+    border-top: 1px solid #dee2e6; 
+    padding: 10px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.nav-button {
+    margin: 0 10px;
+}
+
+.verification-helper table tr{
+    display: flex;
+    align-items: start;
+    justify-content: start;
+    margin-bottom: 15px;
+}
+
+</style>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+      <a class="navbar-brand mx-auto" href="#">WIC Opvarenden Validator</a>
+    </div>
+  </nav>
+
+  
+<div class="container-fluid">
+    <div class="row full-height-row">
+        <!-- Focus Text and Sailor on the Left -->
+        <div class="col-lg-4 left-column">
+
+            <!-- Sailor Form Section -->
+            <h5 style="text-align: center;">Sailor</h5>
+            <div class="form-wrapper">
+                <div class="form-wrapper">
+                    <div class="form-container">
+                        <form method="post" id="deed-verification-form">
+                            {% csrf_token %}
+                            <div class="form-field form-field-name">
+                                <div class="form-row">{{ form.final_name.label_tag }} {{ form.final_name }}</div>
+                            </div>
+                            <div class="form-field form-field-location">
+                                <div class="form-row">{{ form.final_location.label_tag }} {{ form.final_location }}</div>
+                            </div>
+                            <div class="form-field form-field-ship-name">
+                                <div class="form-row">{{ form.final_ship_name.label_tag }} {{ form.final_ship_name }}</div>
+                            </div>
+                            <div class="form-field form-field-role">
+                                <div class="form-row">{{ form.final_role.label_tag }} {{ form.final_role }}</div>
+                            </div>
+                            <div class="form-field form-field-organization">
+                                <div class="form-row">{{ form.final_organization.label_tag }} {{ form.final_organization }}</div>
+                            </div>
+                            <div class="form-field form-field-captain">
+                                <div class="form-row">{{form.final_captain.label_tag}}{{form.final_captain}}</div>
+                            </div>
+                            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#additionalFields" aria-expanded="false" aria-controls="additionalFields" style="margin: 20px auto; display: table;">
+                                Show/Hide Additional Fields
+                            </button>
+                            <div class="collapse" id="additionalFields">
+                                <div class="form-field form-field-chamber">
+                                    <div class="form-row">{{form.final_chamber.label_tag}}{{form.final_chamber}}</div>
+                                </div>
+                                <div class="form-field form-field-shiptype">
+                                    <div class="form-row">{{form.final_shiptype.label_tag}}{{form.final_shiptype}}</div>
+                                </div>
+                                <div class="form-field form-field-remarks">
+                                    <div class="form-row">{{form.final_remarks.label_tag}}{{form.final_remarks}}</div>
+                                </div>
+                            </div>
+                            <div>{{form.submit_button}}</div>
+                        </form>
+                        <a href="{{ deed.deed_uri }}" target="_blank">Deed of {{ deed.deed_date|date:"j F Y" }}</a>
+                    </div>
+                </div>
+            </div>
+
+                        <!-- Focus Text Section -->
+                        <h5 class="text-center">Focus Text</h5>
+                        <div class="deed-text rounded-box">
+                            {{ deed.text|highlight_interesting_text_before:deed.interesting_text|highlight_interesting_text_after:deed.interesting_text_after|safe }}
+                        </div>
+        </div>
+
+        <!-- Scan on the Right -->
+        <div class="col-lg-8">
+            <h5 class="text-center">Scan</h5>
+            <div id="openseadragon-viewer" style="width: 100%;"></div>
+        </div>
+    </div>
+
+</div>
+<div class="nav-buttons-container">
+    <a href="#" onclick="submitFormAndGoBack(event);" class="back-btn nav-button btn btn-secondary">List</a>
+    <button id="resetButton" class="btn btn-warning">Reset</button>
+    {% if prev_deed %}
+      <a href="{% url 'verify_deed' prev_deed.id %}" class="prev-deed nav-button btn btn-primary">&larr; Previous</a>
+    {% endif %}
+    {% if next_deed %}
+      <a href="{% url 'verify_deed' next_deed.id %}" class="next-deed nav-button btn btn-primary">Next &rarr;</a>
+    {% endif %}
+  </div>
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+    const imageURL = '{{ deed.image_url | safe }}';
+    const iiifURL = `https://files.transkribus.eu/iiif/2/${imageURL}/info.json`;
+
+    const viewer = OpenSeadragon({
+        id: "openseadragon-viewer",
+        prefixUrl: "https://cdnjs.cloudflare.com/ajax/libs/openseadragon/2.4.2/images/",
+        tileSources: iiifURL,
+    });
+
+    function convertCoordsToOverlay(coords, dimensions) {
+        const [x1, y1] = coords[0];
+        const [x2, y2] = coords[1];
+        const [x3, y3] = coords[2];
+        const [x4, y4] = coords[3];
+
+        const imageWidth = dimensions[0];
+        const imageHeight = dimensions[1];
+
+        const width = (x2 - x1) / imageWidth;
+        const height = (y3 - y1) / imageHeight;
+
+        const x = x1 / imageWidth;
+        const y = y1 / imageHeight;
+
+        return { x, y, width, height };
+    }
+
+    const full_coords = {{ deed.full_coords | safe }};
+    const dimensions = {{ deed.dimensions | safe }};
+
+    const overlay = convertCoordsToOverlay(full_coords, dimensions);
+
+    viewer.addHandler('open', function() {
+        const bounds = new OpenSeadragon.Rect(overlay.x, overlay.y, overlay.width, overlay.height);
+        viewer.viewport.fitBounds(bounds, true);
+    });
+
+    $(document).ready(function () {
+        $(".clickable-name").on("click", function () {
+            var clickedName = $(this).text();
+            $("#id_final_name").val(clickedName);
+        });
+
+        $(".clickable-name").on("contextmenu", function (event){
+        event.preventDefault();
+        var clickedName = $(this).text();
+        $("#id_final_captain").val(clickedName);
+    });
+
+        $(".clickable-location").on("click", function () {
+            var clickedLocation = $(this).text();
+            $("#id_final_location").val(clickedLocation);
+        });
+
+        $(".clickable-role").on("click", function () {
+            var clickedRole = $(this).text();
+            $("#id_final_role").val(clickedRole);
+        });
+
+        $(".clickable-organization").on("click", function () {
+            var clickedOrganization = $(this).text();
+            $("#id_final_organization").val(clickedOrganization);
+        });
+
+        $(".clickable-ship-name").on("click", function () {
+            var clickedShipName = $(this).text();
+            $("#id_final_ship_name").val(clickedShipName);
+        });
+
+        $("a.next-deed, a.prev-deed").on("click", function (event) {
+            event.preventDefault();
+            var targetUrl = $(this).attr('href');
+            $("form").append('<input type="hidden" name="next_url" value="' + targetUrl + '">');
+            $("form").submit();
+        });
+        
+        $('#resetButton').on('click', function () {
+            // Set the form fields to their respective suggested values
+            $('#id_final_name').val('{{ deed.suggested_name }}');
+            $('#id_final_location').val('{{ deed.suggested_location }}');
+            $('#id_final_role').val('{{ deed.suggested_role }}');
+            $('#id_final_organization').val('{{ deed.suggested_organization }}');
+            $('#id_final_ship_name').val('{{ deed.suggested_ship_name }}');
+            // Set certain form fields to empty
+            $('#id_final_captain').val('');
+            $('#id_final_chamber').val('');
+            $('#id_final_shiptype').val('');
+            $('#id_final_remarks').val('');
+        });
+
+        $("#id_final_ship_name").autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: "/ship-names/",
+                data: { term: request.term },
+                dataType: "json",
+                success: function(data) {
+                    var transformed = $.map(data, function(ship_name) {
+                        return {
+                            label: ship_name,
+                            value: ship_name
+                        };
+                    });
+                    response(transformed);
+                }
+            });
+        },
+        minLength: 2,
+        autoFocus: true,
+    });
+
+$("#id_final_role").autocomplete({
+    source: function(request, response) {
+        $.ajax({
+            url: "/roles/",
+            data: { term: request.term },
+            dataType: "json",
+            success: function(data) {
+                var transformed = $.map(data, function(role) {  // Use 'role' instead of 'ship_name'
+                    return {
+                        label: role,
+                        value: role
+                    };
+                });
+                response(transformed);
+            }
+        });
+    },
+    minLength: 2,
+    autoFocus: true,
+});
+
+$("#id_final_organization").autocomplete({
+    source: function(request, response) {
+        $.ajax({
+            url: "/organizations/",
+            data: { term: request.term },
+            dataType: "json",
+            success: function(data) {
+                var transformed = $.map(data, function(organization) {  // Use 'organization' instead of 'ship_name'
+                    return {
+                        label: organization,
+                        value: organization
+                    };
+                });
+                response(transformed);
+            }
+        });
+    },
+    minLength: 2,
+    autoFocus: true,
+});
+
+
+
+    });
+
+    function submitFormAndGoBack(event) {
+        event.preventDefault(); // Prevent the default behavior of the anchor tag
+
+        const form = document.getElementById('deed-verification-form');
+        
+        // Submit the form asynchronously using fetch
+        fetch(form.action, {
+            method: form.method,
+            body: new FormData(form)
+        })
+        .then(function(response) {
+            // After successful form submission, navigate back to the "/deeds" page
+            window.location.href = '/deeds';
+        })
+        .catch(function(error) {
+            console.error('Error:', error);
+        });
+    }
+</script>
+{% endblock %}

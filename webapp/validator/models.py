@@ -37,6 +37,7 @@ class Deed(models.Model):
     full_coords = models.TextField(blank=True, null=True)
     dimensions = models.TextField(blank=True, null=True)
     image_url = models.TextField(blank=True, null=True)
+    validation_complete = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.deed_uri} - {self.deed_date}"
