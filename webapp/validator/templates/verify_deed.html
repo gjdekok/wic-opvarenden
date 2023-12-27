@@ -468,6 +468,8 @@
         $("#id_final_captain").val(clickedName);
     });
 
+    
+
         $(".clickable-location").on("click", function () {
             var clickedLocation = $(this).text();
             $("#id_final_location").val(clickedLocation);
@@ -494,7 +496,15 @@
             $("form").append('<input type="hidden" name="next_url" value="' + targetUrl + '">');
             $("form").submit();
         });
-        
+
+        $(".clickable-name").on("mousedown", function (event) {
+        if (event.which === 2) {
+            event.preventDefault();
+            var clickedName = $(this).text();
+            $("#id_final_creditor_name").val(clickedName); 
+        }
+    });
+
         $('#resetButton').on('click', function () {
             // Set the form fields to their respective suggested values
             $('#id_final_name').val('{{ deed.suggested_name }}');
@@ -577,7 +587,7 @@ $("#id_final_organization").autocomplete({
     });
 
     function submitFormAndGoBack(event) {
-        event.preventDefault(); // Prevent the default behavior of the anchor tag
+        event.preventDefault(); 
 
         const form = document.getElementById('deed-verification-form');
         
@@ -596,7 +606,7 @@ $("#id_final_organization").autocomplete({
     }
 
     document.addEventListener('keydown', function(event) {
-        if (event.code === 'Space') {
+        if (event.code === 'Escape') {
             event.preventDefault();
             const validationCheckbox = document.getElementById('id_validation_complete');
             validationCheckbox.checked = !validationCheckbox.checked;
