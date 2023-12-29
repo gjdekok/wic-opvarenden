@@ -571,7 +571,7 @@ class SailorExtractor:
             if not text:
                 text = ""
                
-                   # Get a list of sailors and locations mentioned in this deed
+            # Get a list of sailors and locations mentioned in this deed
             name_to_uri = {person.label: person.person_uri for person in deed.persons}
             location_to_uri = {location.label.replace('?', ''): location.location_uri for location in deed.locations} # Remove question marks from location names as fuzzy_search doesn't like them
 
