@@ -515,6 +515,7 @@ class SailorExtractor:
             list: A list of Sailor instances extracted from the deeds.
         """
 
+        variant = None
         # Initialize logger
         logger = logging.getLogger(__name__)
         
@@ -592,6 +593,9 @@ class SailorExtractor:
                 elif "varende" in text:
                     text = text.replace("varende", " varende voor ")
                     match = max(sailor_searcher.find_matches(text), default=None, key=lambda x: x.levenshtein_similarity)
+
+            if match:
+                variant = match
 
             # Try searching for an alternative text pattern
             if not match:
@@ -704,16 +708,16 @@ class SailorExtractor:
 
             if match:
                 possible_creditor_mention = text[match.offset:match.offset+50]
-                print(possible_creditor_mention)
+
                 best_creditor_name_match = max(name_searcher.find_matches(possible_creditor_mention), default=None, key=lambda x: x.levenshtein_similarity)
-                print(best_creditor_name_match)
+
                 
                 if best_creditor_name_match:
                     creditor_name = best_creditor_name_match.phrase.phrase_string
                     creditor_uri = name_to_uri.get(creditor_name)
 
                 possible_debt_mention = text[match.offset+20:match.offset+200]
-                print(possible_debt_mention)
+
                 debt_match = re.search(debt_pattern, possible_debt_mention, re.IGNORECASE)
                 if debt_match:
                     debt_htr = debt_match.group(2).strip()
@@ -746,6 +750,7 @@ class SailorExtractor:
                 'full_text': text,
                 'full_coords': calculate_bounding_rectangle(fullcoords) if fullcoords else None,
                 'dimensions': dimensions if dimensions else None,
+                'variant': variant
                 # 'image_url': this_image_url
             }
 
