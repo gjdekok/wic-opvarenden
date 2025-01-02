@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Opvarenden Map</title>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/leaflet.markercluster.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/MarkerCluster.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/MarkerCluster.Default.css"/>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+        #time-slider {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <div id="time-slider">
+        <label for="year-range">Year Range:</label>
+        <input id="year-range" type="range" min="1635" max="1665" step="1" value="1635" oninput="updateYearRange(this.value)">
+        <span id="selected-year">1635-1639</span>
+    </div>
+
+    <script>
+        var map = L.map('map').setView([52.0, 5.0], 5);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+        }).addTo(map);
+
+        var markerCluster = L.markerClusterGroup().addTo(map);
+
+        function updateYearRange(year) {
+            let startYear = parseInt(year);
+            let endYear = startYear + 2;
+            document.getElementById('selected-year').textContent = `${startYear}-${endYear}`;
+
+            // Make an AJAX call to fetch data based on the selected range
+            fetch(`/get_sailors_soldiers?start_year=${startYear}&end_year=${endYear}`)
+                .then(response => response.json())
+                .then(data => {
+                    markerCluster.clearLayers(); // Clear the current markers
+
+                    data.forEach(function(item) {
+                        // Determine the marker color and icon based on the role
+                        var markerColor = (item.role && item.role.toLowerCase() === 'soldier') ? 'red' : 'blue';
+                        var markerIcon = (item.role && item.role.toLowerCase() === 'soldier') ? 'fa-user' : 'fa-anchor';
+
+                        // Create a marker using AwesomeMarkers
+                        var customIcon = L.AwesomeMarkers.icon({
+                            icon: markerIcon,
+                            prefix: 'fa', // Font Awesome prefix
+                            markerColor: markerColor,
+                            iconColor: 'white'
+                        });
+
+                        var marker = L.marker([item.latitude, item.longitude], { icon: customIcon })
+                            .bindPopup(`<b>${item.name}</b><br>Role: ${item.role}<br>Date: ${item.deed_date}`);
+                        
+                        markerCluster.addLayer(marker);
+                    });
+                });
+        }
+
+        // Initial load for the first range (1635-1637)
+        updateYearRange(1635);
+    </script>
+</body>
+</html>

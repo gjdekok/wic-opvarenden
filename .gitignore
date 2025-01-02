@@ -1,5 +1,7 @@
 data/pagexml/
 scrap/
+results_webapp/
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
