@@ -60,9 +60,6 @@ cover/
 *.mo
 *.pot
 
-# Script output
-*.csv
-
 # Django stuff:
 *.log
 local_settings.py

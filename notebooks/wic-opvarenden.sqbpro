@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="/home/gerhard/programming/python/wic-opvarenden/notebooks/wic-opvarenden.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="0"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="2463"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="4,7:mainVoyages"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="Deeds" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="61"/><column index="2" value="300"/><column index="3" value="73"/><column index="4" value="83"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Locations" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="83"/><column index="2" value="171"/><column index="3" value="62"/><column index="4" value="245"/><column index="5" value="78"/><column index="6" value="74"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter><filter value="nij"/></global_filter></table><table schema="main" name="Persons" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="75"/><column index="2" value="265"/><column index="3" value="300"/><column index="4" value="59"/><column index="5" value="300"/><column index="6" value="300"/><column index="7" value="166"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Voyages" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="77"/><column index="2" value="160"/><column index="3" value="139"/><column index="4" value="117"/><column index="5" value="114"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="temp_location_data" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="171"/><column index="2" value="62"/><column index="3" value="86"/><column index="4" value="86"/><column index="5" value="146"/><column index="6" value="137"/><column index="7" value="87"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="Top voyages">SELECT V.voyage_id, 
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="/home/gerhard/programming/python/wic-opvarenden/notebooks/wic-opvarenden.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="2463"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="4,5:mainDeeds"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="Deeds" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="61"/><column index="2" value="300"/><column index="3" value="73"/><column index="4" value="83"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Locations" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="83"/><column index="2" value="171"/><column index="3" value="62"/><column index="4" value="245"/><column index="5" value="78"/><column index="6" value="74"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter><filter value="nij"/></global_filter></table><table schema="main" name="Persons" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="75"/><column index="2" value="265"/><column index="3" value="300"/><column index="4" value="99"/><column index="5" value="300"/><column index="6" value="300"/><column index="7" value="166"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Voyages" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="77"/><column index="2" value="160"/><column index="3" value="139"/><column index="4" value="117"/><column index="5" value="114"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="temp_location_data" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="171"/><column index="2" value="62"/><column index="3" value="86"/><column index="4" value="86"/><column index="5" value="146"/><column index="6" value="137"/><column index="7" value="87"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="Top voyages">SELECT V.voyage_id, 
        V.ship_name || ' (' || V.organization || ', ' || strftime('%Y', V.last_deed_date) || ')' AS voyage,
-       ROUND(SUM(T.final_debt_amount_int)) AS total_debt, 
-       ROUND(AVG(T.final_debt_amount_int)) AS average_debt, 
+       CAST(ROUND(SUM(T.final_debt_amount_int)) AS INTEGER) AS total_debt, 
+       CAST(ROUND(AVG(T.final_debt_amount_int)) AS INTEGER) AS average_debt, 
        COUNT(T.deed_id) AS number_of_transactions,
        strftime('%Y', V.last_deed_date) AS voyage_year
        
@@ -35,13 +35,13 @@ LEFT JOIN Locations L ON S.location_standardized = L.location_id
 GROUP BY V.voyage_id, voyage
 ORDER BY total DESC;
 </sql><sql name="Total amount lent">SELECT L.country, 
-       SUM(T.final_debt_amount_int) AS total_amount_lent, 
+       CAST(SUM(T.final_debt_amount_int) AS INTEGER) AS total_amount_lent, 
        COUNT(T.deed_id) AS number_of_loans,
-       ROUND(AVG(T.final_debt_amount_int)) AS average_loan_amount
+       CAST(ROUND(AVG(T.final_debt_amount_int)) AS INTEGER) AS average_loan_amount
 FROM Transactions T
 JOIN Persons S ON T.sailor_id = S.person_id
 JOIN Locations L ON S.location_standardized = L.location_id
-WHERE S.role = 'sailor'
+WHERE S.role_category = 'sailor'
 GROUP BY L.country
 ORDER BY total_amount_lent DESC;
 </sql><sql name="Transactions per nationality per creditor">SELECT P.name AS creditor_name, 
@@ -62,11 +62,11 @@ JOIN Persons S ON T.sailor_id = S.person_id
 LEFT JOIN Locations L ON S.location_standardized = L.location_id
 GROUP BY P.name
 ORDER BY total DESC;
-</sql><sql name="Transactions per role per creditor">SELECT 
+</sql><sql name="Transactions per role category per creditor">SELECT 
     P.name AS creditor_name, 
-    COUNT(CASE WHEN S.role = 'sailor' THEN T.deed_id END) AS sailor_transactions,
-    COUNT(CASE WHEN S.role = 'soldier' THEN T.deed_id END) AS soldier_transactions,
-    COUNT(CASE WHEN S.role IS NULL OR S.role NOT IN ('sailor', 'soldier') THEN T.deed_id END) AS unknown_transactions,
+    COUNT(CASE WHEN S.role_category = 'sailor' THEN T.deed_id END) AS sailor_transactions,
+    COUNT(CASE WHEN S.role_category = 'soldier' THEN T.deed_id END) AS soldier_transactions,
+    COUNT(CASE WHEN S.role_category IS NULL OR S.role_category NOT IN ('sailor', 'soldier') THEN T.deed_id END) AS unknown_transactions,
     COUNT(T.deed_id) AS total_transactions
 FROM 
     Transactions T
@@ -77,7 +77,137 @@ JOIN
 GROUP BY 
     P.name
 ORDER BY 
-    total_transactions DESC;</sql><sql name="Top locations">SELECT 
+    total_transactions DESC;</sql><sql name="Transactions per role">SELECT 
+    P.role, 
+    COUNT(T.deed_id) AS transaction_count,
+    CAST(ROUND(AVG(T.final_debt_amount_int)) AS INTEGER) AS average_debt_per_transaction,
+    CAST(SUM(T.final_debt_amount_int) AS INTEGER) AS total_debt_amount
+FROM Persons P
+JOIN Transactions T ON P.person_id = T.sailor_id
+WHERE P.role IS NOT NULL
+GROUP BY P.role
+ORDER BY total_debt_amount DESC;
+</sql><sql name="Transactions per role per creditor">WITH RoleCounts AS (
+    SELECT 
+        P.name AS creditor_name,
+        S.role,
+        COUNT(T.deed_id) AS transaction_count
+    FROM Transactions T
+    JOIN Persons P ON T.creditor_id = P.person_id
+    JOIN Persons S ON T.sailor_id = S.person_id
+    -- Include empty roles as well; if you want to count only empty strings,
+    -- you can remove the IS NOT NULL check
+    WHERE S.role IS NOT NULL
+    GROUP BY P.name, S.role
+),
+TotalCounts AS (
+    SELECT 
+        creditor_name, 
+        SUM(transaction_count) AS total_transactions
+    FROM RoleCounts
+    GROUP BY creditor_name
+)
+SELECT 
+    RC.creditor_name,
+    MAX(CASE WHEN RC.role = 'adelborst' THEN RC.transaction_count ELSE 0 END) AS adelborst,
+    MAX(CASE WHEN RC.role = 'appoincte' THEN RC.transaction_count ELSE 0 END) AS appoincte,
+    MAX(CASE WHEN RC.role = 'assistent' THEN RC.transaction_count ELSE 0 END) AS assistent,
+    MAX(CASE WHEN RC.role = 'barbier' THEN RC.transaction_count ELSE 0 END) AS barbier,
+    MAX(CASE WHEN RC.role = 'boekhouder' THEN RC.transaction_count ELSE 0 END) AS boekhouder,
+    MAX(CASE WHEN RC.role = 'bootsgezel' THEN RC.transaction_count ELSE 0 END) AS bootsgezel,
+    MAX(CASE WHEN RC.role = 'bosschieter' THEN RC.transaction_count ELSE 0 END) AS bosschieter,
+    MAX(CASE WHEN RC.role = 'bottelier' THEN RC.transaction_count ELSE 0 END) AS bottelier,
+    MAX(CASE WHEN RC.role = 'botteliersjongen' THEN RC.transaction_count ELSE 0 END) AS botteliersjongen,
+    MAX(CASE WHEN RC.role = 'botteliersmaat' THEN RC.transaction_count ELSE 0 END) AS botteliersmaat,
+    MAX(CASE WHEN RC.role = 'chirurgijn' THEN RC.transaction_count ELSE 0 END) AS chirurgijn,
+    MAX(CASE WHEN RC.role = 'chirurgijnsjongen' THEN RC.transaction_count ELSE 0 END) AS chirurgijnsjongen,
+    MAX(CASE WHEN RC.role = 'commandeur' THEN RC.transaction_count ELSE 0 END) AS commandeur,
+    MAX(CASE WHEN RC.role = 'commies' THEN RC.transaction_count ELSE 0 END) AS commies,
+    MAX(CASE WHEN RC.role = 'commissaris' THEN RC.transaction_count ELSE 0 END) AS commissaris,
+    MAX(CASE WHEN RC.role = 'creditor' THEN RC.transaction_count ELSE 0 END) AS creditor,
+    MAX(CASE WHEN RC.role = 'derde stuurman' THEN RC.transaction_count ELSE 0 END) AS derde_stuurman,
+    MAX(CASE WHEN RC.role = 'hoogbootsman' THEN RC.transaction_count ELSE 0 END) AS hoogbootsman,
+    MAX(CASE WHEN RC.role = 'hooploper' THEN RC.transaction_count ELSE 0 END) AS hooploper,
+    MAX(CASE WHEN RC.role = 'jongen' THEN RC.transaction_count ELSE 0 END) AS jongen,
+    MAX(CASE WHEN RC.role = 'kajuitwachter' THEN RC.transaction_count ELSE 0 END) AS kajuitwachter,
+    MAX(CASE WHEN RC.role = 'kapitein' THEN RC.transaction_count ELSE 0 END) AS kapitein,
+    MAX(CASE WHEN RC.role = 'kapitein-luitenant' THEN RC.transaction_count ELSE 0 END) AS kapitein_luitenant,
+    MAX(CASE WHEN RC.role = 'klerk' THEN RC.transaction_count ELSE 0 END) AS klerk,
+    MAX(CASE WHEN RC.role = 'kok' THEN RC.transaction_count ELSE 0 END) AS kok,
+    MAX(CASE WHEN RC.role = 'koksmaat' THEN RC.transaction_count ELSE 0 END) AS koksmaat,
+    MAX(CASE WHEN RC.role = 'konstabel' THEN RC.transaction_count ELSE 0 END) AS konstabel,
+    MAX(CASE WHEN RC.role = 'konstabelsmaat' THEN RC.transaction_count ELSE 0 END) AS konstabelsmaat,
+    MAX(CASE WHEN RC.role = 'koperslager' THEN RC.transaction_count ELSE 0 END) AS koperslager,
+    MAX(CASE WHEN RC.role = 'korporaal' THEN RC.transaction_count ELSE 0 END) AS korporaal,
+    MAX(CASE WHEN RC.role = 'kuiper' THEN RC.transaction_count ELSE 0 END) AS kuiper,
+    MAX(CASE WHEN RC.role = 'kuipersmaat' THEN RC.transaction_count ELSE 0 END) AS kuipersmaat,
+    MAX(CASE WHEN RC.role = 'kwartiermeester' THEN RC.transaction_count ELSE 0 END) AS kwartiermeester,
+    MAX(CASE WHEN RC.role = 'lansmissaat' THEN RC.transaction_count ELSE 0 END) AS lansmissaat,
+    MAX(CASE WHEN RC.role = 'luitenant' THEN RC.transaction_count ELSE 0 END) AS luitenant,
+    MAX(CASE WHEN RC.role = 'mastklimmer' THEN RC.transaction_count ELSE 0 END) AS mastklimmer,
+    MAX(CASE WHEN RC.role = 'matroos' THEN RC.transaction_count ELSE 0 END) AS matroos,
+    MAX(CASE WHEN RC.role = 'metselaar' THEN RC.transaction_count ELSE 0 END) AS metselaar,
+    MAX(CASE WHEN RC.role = 'notary' THEN RC.transaction_count ELSE 0 END) AS notary,
+    MAX(CASE WHEN RC.role = 'onderbarbier' THEN RC.transaction_count ELSE 0 END) AS onderbarbier,
+    MAX(CASE WHEN RC.role = 'onderchirurgijn' THEN RC.transaction_count ELSE 0 END) AS onderchirurgijn,
+    MAX(CASE WHEN RC.role = 'ondercommies' THEN RC.transaction_count ELSE 0 END) AS ondercommies,
+    MAX(CASE WHEN RC.role = 'onderkoopman' THEN RC.transaction_count ELSE 0 END) AS onderkoopman,
+    MAX(CASE WHEN RC.role = 'onderkorporaal' THEN RC.transaction_count ELSE 0 END) AS onderkorporaal,
+    MAX(CASE WHEN RC.role = 'onderkuiper' THEN RC.transaction_count ELSE 0 END) AS onderkuiper,
+    MAX(CASE WHEN RC.role = 'onderstuurman' THEN RC.transaction_count ELSE 0 END) AS onderstuurman,
+    MAX(CASE WHEN RC.role = 'ondertimmerman' THEN RC.transaction_count ELSE 0 END) AS ondertimmerman,
+    MAX(CASE WHEN RC.role = 'ondertrompetter' THEN RC.transaction_count ELSE 0 END) AS ondertrompetter,
+    MAX(CASE WHEN RC.role = 'onderzeilmaker' THEN RC.transaction_count ELSE 0 END) AS onderzeilmaker,
+    MAX(CASE WHEN RC.role = 'opperbarbier' THEN RC.transaction_count ELSE 0 END) AS opperbarbier,
+    MAX(CASE WHEN RC.role = 'opperchirurgijn' THEN RC.transaction_count ELSE 0 END) AS opperchirurgijn,
+    MAX(CASE WHEN RC.role = 'oppercommies' THEN RC.transaction_count ELSE 0 END) AS oppercommies,
+    MAX(CASE WHEN RC.role = 'opperkuiper' THEN RC.transaction_count ELSE 0 END) AS opperkuiper,
+    MAX(CASE WHEN RC.role = 'opperstuurman' THEN RC.transaction_count ELSE 0 END) AS opperstuurman,
+    MAX(CASE WHEN RC.role = 'oppertimmerman' THEN RC.transaction_count ELSE 0 END) AS oppertimmerman,
+    MAX(CASE WHEN RC.role = 'opperzeilmaker' THEN RC.transaction_count ELSE 0 END) AS opperzeilmaker,
+    MAX(CASE WHEN RC.role = 'provoost' THEN RC.transaction_count ELSE 0 END) AS provoost,
+    MAX(CASE WHEN RC.role = 'rector' THEN RC.transaction_count ELSE 0 END) AS rector,
+    MAX(CASE WHEN RC.role = 'roermaker' THEN RC.transaction_count ELSE 0 END) AS roermaker,
+    MAX(CASE WHEN RC.role = 'scheepsjongen' THEN RC.transaction_count ELSE 0 END) AS scheepsjongen,
+    MAX(CASE WHEN RC.role = 'scheepskorporaal' THEN RC.transaction_count ELSE 0 END) AS scheepskorporaal,
+    MAX(CASE WHEN RC.role = 'scherprechter' THEN RC.transaction_count ELSE 0 END) AS scherprechter,
+    MAX(CASE WHEN RC.role = 'schieman' THEN RC.transaction_count ELSE 0 END) AS schieman,
+    MAX(CASE WHEN RC.role = 'schiemansmaat' THEN RC.transaction_count ELSE 0 END) AS schiemansmaat,
+    MAX(CASE WHEN RC.role = 'schipper' THEN RC.transaction_count ELSE 0 END) AS schipper,
+    MAX(CASE WHEN RC.role = 'schoolmeester' THEN RC.transaction_count ELSE 0 END) AS schoolmeester,
+    MAX(CASE WHEN RC.role = 'schrijver' THEN RC.transaction_count ELSE 0 END) AS schrijver,
+    MAX(CASE WHEN RC.role = 'secretaris' THEN RC.transaction_count ELSE 0 END) AS secretaris,
+    MAX(CASE WHEN RC.role = 'sergeant' THEN RC.transaction_count ELSE 0 END) AS sergeant,
+    MAX(CASE WHEN RC.role = 'slotenmaker' THEN RC.transaction_count ELSE 0 END) AS slotenmaker,
+    MAX(CASE WHEN RC.role = 'smit' THEN RC.transaction_count ELSE 0 END) AS smit,
+    MAX(CASE WHEN RC.role = 'sobra cargo' THEN RC.transaction_count ELSE 0 END) AS sobra_cargo,
+    MAX(CASE WHEN RC.role = 'sobro cargo' THEN RC.transaction_count ELSE 0 END) AS sobro_cargo,
+    MAX(CASE WHEN RC.role = 'soldaat' THEN RC.transaction_count ELSE 0 END) AS soldaat,
+    MAX(CASE WHEN RC.role = 'spekdrager' THEN RC.transaction_count ELSE 0 END) AS spekdrager,
+    MAX(CASE WHEN RC.role = 'speksnijder' THEN RC.transaction_count ELSE 0 END) AS speksnijder,
+    MAX(CASE WHEN RC.role = 'steenhouwer' THEN RC.transaction_count ELSE 0 END) AS steenhouwer,
+    MAX(CASE WHEN RC.role = 'stuurman' THEN RC.transaction_count ELSE 0 END) AS stuurman,
+    MAX(CASE WHEN RC.role = 'tamboer' THEN RC.transaction_count ELSE 0 END) AS tamboer,
+    MAX(CASE WHEN RC.role = 'timmerman' THEN RC.transaction_count ELSE 0 END) AS timmerman,
+    MAX(CASE WHEN RC.role = 'trompetter' THEN RC.transaction_count ELSE 0 END) AS trompetter,
+    MAX(CASE WHEN RC.role = 'vaandrig' THEN RC.transaction_count ELSE 0 END) AS vaandrig,
+    MAX(CASE WHEN RC.role = 'varensgezel' THEN RC.transaction_count ELSE 0 END) AS varensgezel,
+    MAX(CASE WHEN RC.role = 'varensman' THEN RC.transaction_count ELSE 0 END) AS varensman,
+    MAX(CASE WHEN RC.role = 'veldpijper' THEN RC.transaction_count ELSE 0 END) AS veldpijper,
+    MAX(CASE WHEN RC.role = 'voorlezer' THEN RC.transaction_count ELSE 0 END) AS voorlezer,
+    MAX(CASE WHEN RC.role = 'zeilmaker' THEN RC.transaction_count ELSE 0 END) AS zeilmaker,
+    MAX(CASE WHEN RC.role = 'ziekentrooster' THEN RC.transaction_count ELSE 0 END) AS ziekentrooster,
+    MAX(CASE WHEN RC.role = 'zwaardveger' THEN RC.transaction_count ELSE 0 END) AS zwaardveger,
+    -- New column for when role is empty
+    MAX(CASE WHEN RC.role = '' THEN RC.transaction_count ELSE 0 END) AS [geen rol],
+    -- Totals column from the TotalCounts CTE
+    TC.total_transactions
+FROM RoleCounts RC
+JOIN TotalCounts TC 
+    ON RC.creditor_name = TC.creditor_name
+GROUP BY RC.creditor_name, TC.total_transactions
+ORDER BY TC.total_transactions DESC;
+</sql><sql name="Top locations">SELECT 
     L.label AS location_name, 
     L.country, 
     L.latitude, 
@@ -114,91 +244,7 @@ JOIN
 GROUP BY 
     P.name
 ORDER BY 
-    total_transactions DESC;</sql><sql name="SQL 10">SELECT 
-    L.label AS location_name, 
-    L.country, 
-    L.latitude, 
-    L.longitude, 
-    COUNT(CASE WHEN P.role = 'soldier' THEN P.person_id END) AS number_of_soldiers,
-    COUNT(CASE WHEN P.role = 'sailor' OR P.role IS NULL THEN P.person_id END) AS number_of_sailors,
-    COUNT(CASE WHEN P.role IN ('soldier', 'sailor') OR P.role IS NULL THEN P.person_id END) AS total_count
-FROM 
-    Persons P
-JOIN 
-    Locations L ON P.location_standardized = L.location_id
-JOIN 
-    Transactions T ON P.person_id = T.sailor_id  -- Assuming Transactions links persons to dates
-JOIN 
-    Deeds D ON T.deed_id = D.deed_id
-WHERE 
-    L.latitude IS NOT NULL 
-    AND L.longitude IS NOT NULL
-    AND strftime('%Y', D.deed_date) &lt; '1650'
-GROUP BY 
-    L.location_id, L.label, L.country, L.latitude, L.longitude
-ORDER BY 
-    total_count DESC;</sql><sql name="SQL 11">WITH TotalTransactions AS (
-    SELECT 
-        COUNT(CASE WHEN strftime('%Y', D.deed_date) BETWEEN '1635' AND '1649' THEN T.deed_id END) AS total_1635_1649,
-        COUNT(CASE WHEN strftime('%Y', D.deed_date) BETWEEN '1650' AND '1664' THEN T.deed_id END) AS total_1650_1664
-    FROM 
-        Transactions T
-    JOIN 
-        Deeds D ON T.deed_id = D.deed_id
-)
-
-SELECT 
-    L.country AS nationality, 
-    ROUND(100.0 * COUNT(CASE WHEN strftime('%Y', D.deed_date) BETWEEN '1635' AND '1649' THEN T.deed_id END) / (SELECT total_1635_1649 FROM TotalTransactions), 2) AS &quot;1635-1649_Percentage&quot;,
-    ROUND(100.0 * COUNT(CASE WHEN strftime('%Y', D.deed_date) BETWEEN '1650' AND '1664' THEN T.deed_id END) / (SELECT total_1650_1664 FROM TotalTransactions), 2) AS &quot;1650-1664_Percentage&quot;
-FROM 
-    Transactions T
-JOIN 
-    Persons S ON T.sailor_id = S.person_id
-LEFT JOIN 
-    Locations L ON S.location_standardized = L.location_id
-JOIN 
-    Deeds D ON T.deed_id = D.deed_id
-GROUP BY 
-    L.country
-ORDER BY 
-    &quot;1635-1649_Percentage&quot; DESC, 
-    &quot;1650-1664_Percentage&quot; DESC;</sql><sql name="SQL 12">SELECT 
-    L.label AS location_name, 
-    L.country, 
-    L.latitude, 
-    L.longitude, 
-    COUNT(CASE WHEN P.role = 'soldier' THEN P.person_id END) AS number_of_soldiers,
-    COUNT(CASE WHEN P.role = 'sailor' OR P.role IS NULL THEN P.person_id END) AS number_of_sailors,
-    COUNT(CASE WHEN P.role IN ('soldier', 'sailor') OR P.role IS NULL THEN P.person_id END) AS total_count
-FROM 
-    Persons P
-JOIN 
-    Locations L ON P.location_standardized = L.location_id
-JOIN 
-    Transactions T ON P.person_id = T.sailor_id  -- Assuming Transactions links persons to dates
-JOIN 
-    Deeds D ON T.deed_id = D.deed_id
-WHERE 
-    L.latitude IS NOT NULL 
-    AND L.longitude IS NOT NULL
-    AND strftime('%Y', D.deed_date) &gt;= '1650'
-GROUP BY 
-    L.location_id, L.label, L.country, L.latitude, L.longitude
-ORDER BY 
-    total_count DESC;</sql><sql name="SQL 13">CREATE INDEX idx_persons_location_standardized ON Persons(location_standardized);
-CREATE INDEX idx_locations_location_id ON Locations(location_id);
-CREATE INDEX idx_locations_lat_long ON Locations(latitude, longitude);
-CREATE INDEX idx_persons_role ON Persons(role);
-CREATE INDEX idx_persons_location_role ON Persons(location_standardized, role);</sql><sql name="SQL 14">SELECT 
-    P.name, P.role
-FROM 
-    Persons P
-JOIN 
-    Locations L ON P.location_standardized = L.location_id
-WHERE l.location_id = 216
-
-</sql><sql name="SQL 15">-- Index on role for Persons (since we frequently filter on role)
+    total_transactions DESC;</sql><sql name="Create indexes">-- Index on role for Persons (since we frequently filter on role)
 CREATE INDEX IF NOT EXISTS idx_persons_role 
     ON Persons (role);
 
@@ -217,4 +263,14 @@ CREATE INDEX IF NOT EXISTS idx_transactions_voyage
 -- Index on location_standardized in Persons (since we join on P.location_standardized = L.location_id)
 CREATE INDEX IF NOT EXISTS idx_persons_location_standardized
     ON Persons (location_standardized);
-</sql><current_tab id="13"/></tab_sql></sqlb_project>
+</sql><sql name="SQL 14">SELECT 
+    P.role, 
+    COUNT(T.deed_id) AS transaction_count,
+    ROUND(AVG(T.final_debt_amount_int), 2) AS average_debt_per_transaction,
+    SUM(T.final_debt_amount_int) AS total_debt_amount
+FROM Persons P
+JOIN Transactions T ON P.person_id = T.sailor_id
+WHERE P.role IS NOT NULL
+GROUP BY P.role
+ORDER BY total_debt_amount DESC;
+</sql><current_tab id="7"/></tab_sql></sqlb_project>
